@@ -2,7 +2,7 @@
 <html lang="es">
 <head>
 <meta charset="utf-8">
-<title>Nonograma · Duelo</title>
+<title>Nonograma · Duelo por países</title>
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@700;800&family=Nunito:wght@600;700;800&display=swap" rel="stylesheet">
@@ -10,7 +10,7 @@
   :root{
     --navy:#1e1b4b; --navy2:#0f0d2e; --cream:#fbf8f3; --dots:#e7e2d8; --muted:#6b6a8f; --text2:#4c4a7a;
     --green:#22c55e; --green2:#15803d; --yellow:#facc15; --yellow2:#ca8a04; --red:#ef4444; --red2:#b91c1c;
-    --p0:#00205B; --p0d:#BA0C2F; --p0s:#c9d3ea; --p1:#CE1124; --p1d:#8E0B1A; --p1s:#f4c7cc;
+    --p0:#D91023; --p0d:#8F0A17; --p0s:#f7c5cb; --p0f:#ffffff; --p1:#F1BF00; --p1d:#AA151B; --p1s:#fbe9a6; --p1f:#1e1b4b;
     --cell:48px;
   }
   *, *::before, *::after { box-sizing:border-box; }
@@ -47,9 +47,17 @@
   .baloo{ font-family:'Baloo 2'; font-weight:800; }
 
   /* configuración */
-  .two{ display:grid; grid-template-columns:repeat(auto-fit,minmax(240px,1fr)); gap:20px; width:100%; max-width:720px; }
+  .two{ display:grid; grid-template-columns:repeat(auto-fit,minmax(300px,1fr)); gap:20px; width:100%; max-width:860px; }
   .pcard{ display:flex; flex-direction:column; gap:10px; padding:22px; border-radius:24px; color:#fff; }
-  .pcard.p0{ background:var(--p0); box-shadow:0 8px 0 var(--p0d); } .pcard.p1{ background:var(--p1); box-shadow:0 8px 0 var(--p1d); }
+  .pcard.p0{ background:var(--p0); color:var(--p0f); box-shadow:0 8px 0 var(--p0d); } .pcard.p1{ background:var(--p1); color:var(--p1f); box-shadow:0 8px 0 var(--p1d); }
+  .pcard .head{ display:flex; align-items:center; gap:12px; }
+  .pcard .head .name{ font-family:'Baloo 2'; font-weight:800; font-size:28px; line-height:1; }
+  .flag{ width:44px; height:30px; border-radius:4px; box-shadow:0 2px 0 rgba(0,0,0,0.25); background-size:cover; background-position:center; background-repeat:no-repeat; flex:none; }
+  .picker{ display:flex; flex-wrap:wrap; gap:6px; justify-content:center; }
+  .picker button{ display:flex; flex-direction:column; align-items:center; gap:4px; padding:8px 6px; border-radius:14px; border:3px solid transparent; background:#fff; color:var(--navy); opacity:0.72; transition:all .15s; min-width:86px; }
+  .picker button .flag{ width:34px; height:23px; border-radius:3px; box-shadow:0 1px 0 rgba(0,0,0,0.3); }
+  .picker button b{ font-weight:800; font-size:13px; line-height:1; } .picker button small{ font-weight:700; font-size:10px; opacity:0.7; line-height:1; }
+  .picker button.on{ border-color:var(--navy); opacity:1; transform:scale(1.06); }
   .pcard label{ font-size:13px; font-weight:800; letter-spacing:0.06em; text-transform:uppercase; opacity:0.85; }
   .pcard input{ font:inherit; font-weight:800; font-size:22px; padding:12px 14px; border-radius:14px; border:0; background:#fff; color:var(--navy); width:100%; }
   .card{ width:100%; max-width:720px; background:#fff; border-radius:24px; padding:22px 26px; border:4px solid var(--dots); box-shadow:0 8px 0 var(--dots); display:flex; flex-direction:column; gap:16px; }
@@ -155,12 +163,12 @@
   <section class="screen" id="setup">
     <div style="text-align:center; max-width:760px;">
       <div class="eyebrow">Nonograma</div>
-      <h1><span style="color:var(--p0);" id="hName0">Noruega</span> vs <span style="color:var(--p1);" id="hName1">Inglaterra</span></h1>
+      <h1><span style="color:var(--p0);" id="hName0">Perú</span> vs <span style="color:var(--p1);" id="hName1">España</span></h1>
       <p class="lead">Cada jugador resuelve 3 nonogramas por turnos. Los números indican cuántas casillas seguidas van pintadas en cada fila y columna. Gana quien sume menos tiempo, medido en centésimas de segundo.</p>
     </div>
     <div class="two">
-      <label class="pcard p0"><span>Jugador 1</span><input id="name0" value="Noruega" placeholder="Nombre"></label>
-      <label class="pcard p1"><span>Jugador 2</span><input id="name1" value="Inglaterra" placeholder="Nombre"></label>
+      <div class="pcard p0"><div class="head"><div class="flag" id="flag0"></div><div><label id="sec0">Jugador 1</label><div class="name" id="pname0"></div></div></div><div class="picker" id="pick0"></div></div>
+      <div class="pcard p1"><div class="head"><div class="flag" id="flag1"></div><div><label id="sec1">Jugador 2</label><div class="name" id="pname1"></div></div></div><div class="picker" id="pick1"></div></div>
     </div>
     <div class="card">
       <div class="row"><span class="lbl">Tamaño · Puzzle 1</span><div class="seg" data-round="0"><button data-n="5" class="on">5×5</button><button data-n="6">6×6</button><button data-n="7">7×7</button><button data-n="8">8×8</button><button data-n="10">10×10</button></div></div>
@@ -335,8 +343,27 @@ paintSnd();
 
 // ===================== Estado y pantallas =====================
 const $ = (id) => document.getElementById(id);
-const COLORS = [{ main: 'var(--p0)', dark: 'var(--p0d)', soft: 'var(--p0s)', hex: ['#00205B', '#BA0C2F', '#ffffff'] }, { main: 'var(--p1)', dark: 'var(--p1d)', soft: 'var(--p1s)', hex: ['#CE1124', '#ffffff', '#1e1b4b'] }];
-const S = { phase: 'setup', names: ['Noruega', 'Inglaterra'], sizes: [5, 5, 5], limit: 300, hints: true,
+const _FLAG = (svg) => `url("data:image/svg+xml;utf8,${encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 30 20">' + svg + '</svg>')}")`;
+const PAISES = [
+  { nombre: 'Perú',     seccion: '1ro Chocano',    main: '#D91023', dark: '#8F0A17', soft: '#f7c5cb', fg: '#ffffff', confetti: ['#D91023', '#ffffff', '#D91023'],
+    flag: _FLAG('<rect width="30" height="20" fill="#D91023"/><rect x="10" width="10" height="20" fill="#fff"/>') },
+  { nombre: 'España',   seccion: '1ro Valdelomar', main: '#F1BF00', dark: '#AA151B', soft: '#fbe9a6', fg: '#1e1b4b', confetti: ['#AA151B', '#F1BF00', '#AA151B'],
+    flag: _FLAG('<rect width="30" height="20" fill="#AA151B"/><rect y="5" width="30" height="10" fill="#F1BF00"/>') },
+  { nombre: 'Francia',  seccion: '2do Eguren',     main: '#0055A4', dark: '#EF4135', soft: '#c5d7ee', fg: '#ffffff', confetti: ['#0055A4', '#ffffff', '#EF4135'],
+    flag: _FLAG('<rect width="30" height="20" fill="#EF4135"/><rect width="20" height="20" fill="#fff"/><rect width="10" height="20" fill="#0055A4"/>') },
+  { nombre: 'Japón',    seccion: '2do Vallejo',    main: '#BC002D', dark: '#6e0019', soft: '#f3c4d0', fg: '#ffffff', confetti: ['#BC002D', '#ffffff', '#BC002D'],
+    flag: _FLAG('<rect width="30" height="20" fill="#fff"/><circle cx="15" cy="10" r="6" fill="#BC002D"/><rect width="30" height="20" fill="none" stroke="rgba(0,0,0,0.18)" stroke-width="0.6"/>') },
+  { nombre: 'Portugal', seccion: '3ro Ribeyro',    main: '#046A38', dark: '#DA291C', soft: '#bfe0cc', fg: '#ffffff', confetti: ['#046A38', '#DA291C', '#FFE900'],
+    flag: _FLAG('<rect width="30" height="20" fill="#DA291C"/><rect width="12" height="20" fill="#046A38"/><circle cx="12" cy="10" r="4.6" fill="none" stroke="#FFE900" stroke-width="1.4"/><circle cx="12" cy="10" r="2.4" fill="#DA291C" stroke="#fff" stroke-width="0.8"/>') },
+  { nombre: 'Alemania', seccion: '3ro Alegría',    main: '#1a1a1a', dark: '#DD0000', soft: '#d6d6d6', fg: '#ffffff', confetti: ['#000000', '#DD0000', '#FFCE00'],
+    flag: _FLAG('<rect width="30" height="20" fill="#FFCE00"/><rect width="30" height="13.34" fill="#DD0000"/><rect width="30" height="6.67" fill="#000"/>') },
+  { nombre: 'Brasil',   seccion: '4to Arguedas',   main: '#009C3B', dark: '#FFDF00', soft: '#bfe6cf', fg: '#ffffff', confetti: ['#009C3B', '#FFDF00', '#002776'],
+    flag: _FLAG('<rect width="30" height="20" fill="#009C3B"/><polygon points="15,2.6 26.6,10 15,17.4 3.4,10" fill="#FFDF00"/><circle cx="15" cy="10" r="4.6" fill="#002776"/><path d="M10.8 8.9 Q15 7.4 19.2 9.6" stroke="#fff" stroke-width="0.9" fill="none"/>') },
+];
+PAISES.forEach((c) => { c.dot = c.soft; c.hex = c.confetti; });
+const SEL = [0, 1];
+const COLORS = [PAISES[0], PAISES[1]];
+const S = { phase: 'setup', names: [PAISES[0].nombre, PAISES[1].nombre], sizes: [5, 5, 5], limit: 300, hints: true,
   practice: false, puzzles: null, times: [[], []], turns: [], turn: 0, sub: 'ready', cells: null,
   t0: 0, acc: 0, cd: null, raf: null, tick: null, flashN: 0, paint: null };
 const cur = () => S.turns[S.turn];                       // { p, r }
@@ -344,10 +371,23 @@ const puzzle = () => S.puzzles[cur().p][cur().r];
 const elapsed = () => S.acc + (S.sub === 'running' ? performance.now() - S.t0 : 0);
 
 function show(which){ ['setup', 'play', 'end'].forEach((id) => { $(id).hidden = id !== which; }); const el = $(which); el.style.animation = 'none'; void el.offsetWidth; el.style.animation = ''; }
-function flash(text, bg){ const o = $('flash'); o.textContent = text; o.style.background = bg || 'var(--navy)'; o.hidden = false; o.className = 'flash ' + (S.flashN++ % 2 ? 'a' : 'b'); clearTimeout(o._t); o._t = setTimeout(() => { o.hidden = true; }, 900); }
+function flash(text, bg, fg){ const o = $('flash'); o.textContent = text; o.style.background = bg || 'var(--navy)'; o.style.color = fg || '#fff'; o.hidden = false; o.className = 'flash ' + (S.flashN++ % 2 ? 'a' : 'b'); clearTimeout(o._t); o._t = setTimeout(() => { o.hidden = true; }, 900); }
 
 // --- configuración ---
-['name0', 'name1'].forEach((id, i) => $(id).addEventListener('input', (e) => { S.names[i] = e.target.value; $('hName' + i).textContent = e.target.value || `Jugador ${i + 1}`; }));
+function applyPaises(){
+  [0, 1].forEach((i) => {
+    const c = PAISES[SEL[i]]; COLORS[i] = c; S.names[i] = c.nombre;
+    const root = document.documentElement.style;
+    root.setProperty(`--p${i}`, c.main); root.setProperty(`--p${i}d`, c.dark); root.setProperty(`--p${i}s`, c.soft); root.setProperty(`--p${i}f`, c.fg);
+    $('hName' + i).textContent = c.nombre; $('pname' + i).textContent = c.nombre; $('sec' + i).textContent = `Jugador ${i + 1} · ${c.seccion}`;
+    $('flag' + i).style.backgroundImage = c.flag;
+    [...$('pick' + i).children].forEach((b) => b.classList.toggle('on', Number(b.dataset.k) === SEL[i]));
+  });
+}
+function pick(i, k){ if (SEL[1 - i] === k) SEL[1 - i] = SEL[i]; SEL[i] = k; snd('pass'); applyPaises(); } // si el otro ya lo tenía, se intercambian
+[0, 1].forEach((i) => { $('pick' + i).innerHTML = PAISES.map((c, k) => `<button type="button" data-k="${k}"><div class="flag" style="background-image:${c.flag}"></div><b>${c.nombre}</b><small>${c.seccion}</small></button>`).join('');
+  $('pick' + i).addEventListener('click', (e) => { const b = e.target.closest('button[data-k]'); if (b) pick(i, Number(b.dataset.k)); }); });
+applyPaises();
 document.querySelectorAll('.seg[data-round]').forEach((seg) => seg.addEventListener('click', (e) => {
   const b = e.target.closest('button[data-n]'); if (!b) return;
   S.sizes[Number(seg.dataset.round)] = Number(b.dataset.n); [...seg.children].forEach((x) => x.classList.toggle('on', x === b)); snd('pass');
@@ -382,7 +422,7 @@ function beginTurn(i){
   const pz = puzzle(); S.cells = Array.from({ length: pz.n }, () => new Array(pz.n).fill(''));
   buildBoard(pz); $('result').hidden = true; snd('start');
   show('play'); paint();
-  if (!S.practice && i > 0 && S.turns[i - 1].p !== cur().p){ const name = S.names[cur().p] || `Jugador ${cur().p + 1}`; setTimeout(() => flash(`¡Turno de ${name}!`, COLORS[cur().p].main), 250); }
+  if (!S.practice && i > 0 && S.turns[i - 1].p !== cur().p){ const name = S.names[cur().p] || `Jugador ${cur().p + 1}`; setTimeout(() => flash(`¡Turno de ${name}!`, COLORS[cur().p].main, COLORS[cur().p].fg), 250); }
 }
 function startClock(){ // cuenta regresiva 3-2-1 y arranca el cronómetro
   if (S.sub !== 'ready' && S.sub !== 'paused') return;
@@ -390,7 +430,7 @@ function startClock(){ // cuenta regresiva 3-2-1 y arranca el cronómetro
   let n = 3;
   const step = () => {
     if (S.phase !== 'play'){ clearInterval(S.cd); return; }
-    if (n > 0){ snd('cdTick', n); flash(String(n), COLORS[cur().p].main); n--; return; }
+    if (n > 0){ snd('cdTick', n); flash(String(n), COLORS[cur().p].main, COLORS[cur().p].fg); n--; return; }
     clearInterval(S.cd); S.sub = 'running'; S.t0 = performance.now(); snd('start'); _tt = false;
     S.tick = setInterval(() => { if (S.sub !== 'running') return; const e = elapsed(); snd('tictac', S.limit ? Math.min(1, e / (S.limit * 1000)) : 0); }, 1000);
     loop(); paint();
@@ -504,7 +544,7 @@ function paint(){
   $('board').classList.toggle('veiled', veiled);
   $('veil').hidden = !veiled; $('veil').querySelector('span').textContent = S.sub === 'countdown' ? 'Preparados…' : S.sub === 'paused' ? 'En pausa · Espacio para continuar' : 'Pulsa Iniciar o Espacio · las pistas se muestran al arrancar';
   $('statusLeft').textContent = S.practice ? `Práctica · puzzle de ejemplo · ${pz.n}×${pz.n}` : `Turno · ${name(p)} · Puzzle ${r + 1} de 3 · ${pz.n}×${pz.n}`;
-  $('statusLeft').style.background = COLORS[p].main;
+  $('statusLeft').style.background = COLORS[p].main; $('statusLeft').style.color = COLORS[p].fg;
   $('statusRight').textContent = S.sub === 'running' ? (S.limit ? `Límite ${fmt(S.limit * 1000)}` : 'Cronómetro en marcha') : S.sub === 'countdown' ? 'Preparados…' : S.sub === 'paused' ? 'En pausa' : ['solved', 'timeout', 'gaveup'].includes(S.sub) ? 'Pulsa Enter para continuar' : 'Pulsa Espacio para arrancar el cronómetro';
   $('statusRight').style.color = S.sub === 'running' ? 'var(--green2)' : 'var(--red2)';
   $('goBtn').textContent = S.sub === 'running' ? 'Pausa' : S.sub === 'countdown' ? 'Cancelar' : 'Iniciar';
@@ -514,12 +554,13 @@ function paint(){
   [0, 1].forEach((i) => {
     const a = $('aside' + i); const c = COLORS[i]; const active = i === p; const hidden = S.practice && i === 1;
     a.hidden = hidden; if (hidden) return;
-    a.style.background = active ? c.main : '#fff'; a.style.color = active ? '#fff' : 'var(--navy)'; a.style.borderColor = active ? c.dark : c.soft;
+    a.style.background = active ? c.main : '#fff'; a.style.color = active ? c.fg : 'var(--navy)'; a.style.borderColor = active ? c.dark : c.soft;
     a.style.boxShadow = active ? `0 10px 0 ${c.dark}` : `0 4px 0 ${c.soft}`; a.style.transform = active ? 'scale(1.02)' : 'scale(1)';
     const done = (S.times[i] || []).filter(Boolean).length, nP = S.practice ? 1 : 3;
     const badge = active ? (S.sub === 'running' ? 'En juego' : over ? 'Terminado' : 'Preparando') : (done === nP ? 'Terminado' : 'Esperando');
     const clockMs = active ? (S.times[i][r] ? S.times[i][r].ms : elapsed()) : total(i);
-    a.innerHTML = `<div class="badge"><span>Jugador ${i + 1}</span><span style="background:${active ? 'rgba(255,255,255,0.25)' : c.soft}; color:${active ? '#fff' : 'var(--navy)'};">${badge}</span></div>
+    a.innerHTML = `<div class="flag" style="background-image:${c.flag}"></div>
+      <div class="badge"><span>${c.seccion}</span><span style="background:${active ? (c.fg === '#ffffff' ? 'rgba(255,255,255,0.25)' : 'rgba(0,0,0,0.12)') : c.soft}; color:${active ? c.fg : 'var(--navy)'};">${badge}</span></div>
       <div class="name">${name(i)}</div>
       <div class="clock">${fmt(clockMs)}</div>
       <div class="times">${Array.from({ length: nP }, (_, k) => { const t = S.times[i][k]; const cls = (active && k === r) ? ' class="cur"' : ''; return `<div${cls}><span>Puzzle ${k + 1} · ${(S.puzzles[i][k] || pz).n}×${(S.puzzles[i][k] || pz).n}</span><span>${t ? fmt(t.ms) + (t.solved ? '' : ' ✕') : '—'}</span></div>`; }).join('')}</div>
@@ -534,9 +575,10 @@ function showEnd(){
   const t = [total(0), total(1)];
   const w = t[0] === t[1] ? -1 : t[0] < t[1] ? 0 : 1;
   $('winnerLine').textContent = w === -1 ? '¡Empate exacto!' : `¡Gana ${name(w)}!`;
-  $('winnerLine').style.color = w === -1 ? 'var(--navy)' : COLORS[w].main;
+  $('winnerLine').style.color = w === -1 ? 'var(--navy)' : (COLORS[w].main === '#F1BF00' ? COLORS[w].dark : COLORS[w].main);
   $('winnerSub').textContent = w === -1 ? `Ambos sumaron ${fmt(t[0])}.` : `${name(w)} sumó ${fmt(t[w])} frente a ${fmt(t[1 - w])} de ${name(1 - w)}. Diferencia: ${fmt(Math.abs(t[0] - t[1]))}.`;
-  $('results').innerHTML = [0, 1].map((i) => `<div class="rcard" style="background:${COLORS[i].main}; box-shadow:0 8px 0 ${COLORS[i].dark}; transform:${i === w ? 'scale(1.04)' : 'scale(1)'};">
+  $('results').innerHTML = [0, 1].map((i) => `<div class="rcard" style="background:${COLORS[i].main}; color:${COLORS[i].fg}; box-shadow:0 8px 0 ${COLORS[i].dark}; transform:${i === w ? 'scale(1.04)' : 'scale(1)'};">
+      <div class="flag" style="background-image:${COLORS[i].flag}"></div>
       <div class="top"><span class="baloo" style="font-size:26px;">${name(i)}</span><span class="tag">${w === -1 ? 'Empate' : i === w ? '¡Ganador!' : 'Buen juego'}</span></div>
       <div class="big">${fmt(t[i])}</div>
       <div class="list">${S.times[i].map((x, k) => `<div><span>Puzzle ${k + 1} · ${S.puzzles[i][k].n}×${S.puzzles[i][k].n}</span><span>${x ? fmt(x.ms) + (x.solved ? '' : ' ✕ límite') : '—'}</span></div>`).join('')}</div>
