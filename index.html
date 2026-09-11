@@ -115,9 +115,9 @@
   .cell.lastC, .cclue.lastC{ border-right:0 !important; }
   .cell.lastR, .rclue.lastR{ border-bottom:0 !important; }
   .cell:hover{ background:#e9e9e9; }
-  .cell.fill{ background:#000; animation:pop .22s ease; }
+  .cell.fill{ background:#000; box-shadow:inset 0 0 0 calc(var(--cell) * 0.09) #fff; animation:pop .22s ease; }
   .cell.x::after{ content:'✕'; color:#8a8a8a; font-weight:900; font-size:calc(var(--cell) * 0.55); line-height:1; }
-  .cell.sol{ background:#000 !important; animation:pop .22s ease; }
+  .cell.sol{ background:#000 !important; box-shadow:inset 0 0 0 calc(var(--cell) * 0.09) #fff; animation:pop .22s ease; }
   .controls{ display:flex; gap:10px; flex-wrap:wrap; justify-content:center; }
   .result{ background:#fff; border-radius:24px; padding:20px 30px; border:4px solid var(--green); box-shadow:0 8px 0 var(--green2); display:flex; flex-direction:column; align-items:center; gap:8px; animation:popA .5s ease both; text-align:center; }
   .result.bad{ border-color:var(--red); box-shadow:0 8px 0 var(--red2); }
@@ -174,9 +174,7 @@
       <div class="row"><span class="lbl">Tamaño · Puzzle 1</span><div class="seg" data-round="0"><button data-n="5" class="on">5×5</button><button data-n="6">6×6</button><button data-n="7">7×7</button><button data-n="8">8×8</button><button data-n="10">10×10</button></div></div>
       <div class="row"><span class="lbl">Tamaño · Puzzle 2</span><div class="seg" data-round="1"><button data-n="5" class="on">5×5</button><button data-n="6">6×6</button><button data-n="7">7×7</button><button data-n="8">8×8</button><button data-n="10">10×10</button></div></div>
       <div class="row"><span class="lbl">Tamaño · Puzzle 3</span><div class="seg" data-round="2"><button data-n="5" class="on">5×5</button><button data-n="6">6×6</button><button data-n="7">7×7</button><button data-n="8">8×8</button><button data-n="10">10×10</button></div></div>
-      <div class="row"><span class="lbl">Límite por puzzle (segundos)</span><div style="display:flex; align-items:center; gap:10px;"><input class="num" id="limit" type="number" min="0" step="10" value="300"><span class="hint">0 = sin límite. Si se agota, cuenta el límite completo.</span></div></div>
-      <div class="row"><span class="lbl">Tachar filas y columnas completas</span><div class="seg" id="hintsSeg"><button data-v="1" class="on">Sí</button><button data-v="0">No</button></div></div>
-      <p class="hint">Los puzzles se generan al azar con solución única. Ambos jugadores reciben puzzles distintos pero del mismo tamaño en cada ronda. Cada jugador resuelve sus 3 puzzles seguidos: primero el jugador 1 y después el jugador 2. Ninguna fila ni columna viene completa.</p>
+      <p class="hint">Los puzzles se generan al azar con solución única. Ambos jugadores reciben puzzles distintos pero del mismo tamaño en cada ronda. Cada jugador resuelve sus 3 puzzles seguidos: primero el jugador 1 y después el jugador 2. Ninguna fila ni columna viene completa. No hay límite de tiempo: el cronómetro corre hasta resolver el puzzle o rendirse.</p>
     </div>
     <div class="btns">
       <button class="pill big green" id="startBtn">¡A jugar!</button>
@@ -361,9 +359,10 @@ const PAISES = [
     flag: _FLAG('<rect width="30" height="20" fill="#009C3B"/><polygon points="15,2.6 26.6,10 15,17.4 3.4,10" fill="#FFDF00"/><circle cx="15" cy="10" r="4.6" fill="#002776"/><path d="M10.8 8.9 Q15 7.4 19.2 9.6" stroke="#fff" stroke-width="0.9" fill="none"/>') },
 ];
 PAISES.forEach((c) => { c.dot = c.soft; c.hex = c.confetti; });
+const FLAG_ATTR = (c) => c.flag.replace(/"/g, '&quot;'); // para usar dentro de style="..."
 const SEL = [0, 1];
 const COLORS = [PAISES[0], PAISES[1]];
-const S = { phase: 'setup', names: [PAISES[0].nombre, PAISES[1].nombre], sizes: [5, 5, 5], limit: 300, hints: true,
+const S = { phase: 'setup', names: [PAISES[0].nombre, PAISES[1].nombre], sizes: [5, 5, 5], limit: 0, hints: false,
   practice: false, puzzles: null, times: [[], []], turns: [], turn: 0, sub: 'ready', cells: null,
   t0: 0, acc: 0, cd: null, raf: null, tick: null, flashN: 0, paint: null };
 const cur = () => S.turns[S.turn];                       // { p, r }
@@ -385,19 +384,18 @@ function applyPaises(){
   });
 }
 function pick(i, k){ if (SEL[1 - i] === k) SEL[1 - i] = SEL[i]; SEL[i] = k; snd('pass'); applyPaises(); } // si el otro ya lo tenía, se intercambian
-[0, 1].forEach((i) => { $('pick' + i).innerHTML = PAISES.map((c, k) => `<button type="button" data-k="${k}"><div class="flag" style="background-image:${c.flag}"></div><b>${c.nombre}</b><small>${c.seccion}</small></button>`).join('');
+[0, 1].forEach((i) => { $('pick' + i).innerHTML = PAISES.map((c, k) => `<button type="button" data-k="${k}"><div class="flag" style="background-image:${FLAG_ATTR(c)}"></div><b>${c.nombre}</b><small>${c.seccion}</small></button>`).join('');
   $('pick' + i).addEventListener('click', (e) => { const b = e.target.closest('button[data-k]'); if (b) pick(i, Number(b.dataset.k)); }); });
 applyPaises();
 document.querySelectorAll('.seg[data-round]').forEach((seg) => seg.addEventListener('click', (e) => {
   const b = e.target.closest('button[data-n]'); if (!b) return;
   S.sizes[Number(seg.dataset.round)] = Number(b.dataset.n); [...seg.children].forEach((x) => x.classList.toggle('on', x === b)); snd('pass');
 }));
-$('hintsSeg').addEventListener('click', (e) => { const b = e.target.closest('button[data-v]'); if (!b) return; S.hints = b.dataset.v === '1'; [...$('hintsSeg').children].forEach((x) => x.classList.toggle('on', x === b)); snd('pass'); });
 $('startBtn').addEventListener('click', startDuel);
 $('practiceBtn').addEventListener('click', startPractice);
 
 function startDuel(){
-  S.limit = Math.max(0, parseInt($('limit').value, 10) || 0);
+  S.limit = 0;
   S.practice = false;
   $('startBtn').textContent = 'Generando puzzles…'; $('startBtn').disabled = true;
   setTimeout(() => {
@@ -559,7 +557,7 @@ function paint(){
     const done = (S.times[i] || []).filter(Boolean).length, nP = S.practice ? 1 : 3;
     const badge = active ? (S.sub === 'running' ? 'En juego' : over ? 'Terminado' : 'Preparando') : (done === nP ? 'Terminado' : 'Esperando');
     const clockMs = active ? (S.times[i][r] ? S.times[i][r].ms : elapsed()) : total(i);
-    a.innerHTML = `<div class="flag" style="background-image:${c.flag}"></div>
+    a.innerHTML = `<div class="flag" style="background-image:${FLAG_ATTR(c)}"></div>
       <div class="badge"><span>${c.seccion}</span><span style="background:${active ? (c.fg === '#ffffff' ? 'rgba(255,255,255,0.25)' : 'rgba(0,0,0,0.12)') : c.soft}; color:${active ? c.fg : 'var(--navy)'};">${badge}</span></div>
       <div class="name">${name(i)}</div>
       <div class="clock">${fmt(clockMs)}</div>
@@ -578,7 +576,7 @@ function showEnd(){
   $('winnerLine').style.color = w === -1 ? 'var(--navy)' : (COLORS[w].main === '#F1BF00' ? COLORS[w].dark : COLORS[w].main);
   $('winnerSub').textContent = w === -1 ? `Ambos sumaron ${fmt(t[0])}.` : `${name(w)} sumó ${fmt(t[w])} frente a ${fmt(t[1 - w])} de ${name(1 - w)}. Diferencia: ${fmt(Math.abs(t[0] - t[1]))}.`;
   $('results').innerHTML = [0, 1].map((i) => `<div class="rcard" style="background:${COLORS[i].main}; color:${COLORS[i].fg}; box-shadow:0 8px 0 ${COLORS[i].dark}; transform:${i === w ? 'scale(1.04)' : 'scale(1)'};">
-      <div class="flag" style="background-image:${COLORS[i].flag}"></div>
+      <div class="flag" style="background-image:${FLAG_ATTR(COLORS[i])}"></div>
       <div class="top"><span class="baloo" style="font-size:26px;">${name(i)}</span><span class="tag">${w === -1 ? 'Empate' : i === w ? '¡Ganador!' : 'Buen juego'}</span></div>
       <div class="big">${fmt(t[i])}</div>
       <div class="list">${S.times[i].map((x, k) => `<div><span>Puzzle ${k + 1} · ${S.puzzles[i][k].n}×${S.puzzles[i][k].n}</span><span>${x ? fmt(x.ms) + (x.solved ? '' : ' ✕ límite') : '—'}</span></div>`).join('')}</div>

@@ -27,11 +27,11 @@ La lista vive en `index.html` (constante `PAISES`).
 
 ## Cómo funciona
 
-1. **Configuración:** país de cada jugador, tamaño de cada uno de los 3 puzzles (5×5 a 10×10), límite de tiempo por puzzle (0 = sin límite) y si se tachan las filas y columnas ya completas.
+1. **Configuración:** país de cada jugador y tamaño de cada uno de los 3 puzzles (5×5 a 10×10). No hay límite de tiempo ni ayudas.
 2. **Puzzles:** se generan al azar con solución única y sin filas ni columnas completas (nunca aparece el número máximo). Cada jugador recibe puzzles distintos, pero del mismo tamaño en cada ronda.
 3. **Turnos:** el jugador 1 resuelve sus 3 puzzles seguidos y después el jugador 2 los suyos.
 4. **Cada turno:** las pistas están ocultas hasta pulsar Iniciar. Suena una cuenta regresiva 3-2-1 y arranca el cronómetro. El puzzle se da por resuelto automáticamente cuando todas las filas y columnas cumplen sus números.
-5. **Límite:** si se agota, el puzzle cuenta con el límite completo y se muestra la solución. "Rendirse" hace lo mismo.
+5. **Rendirse:** termina el puzzle con el tiempo transcurrido hasta ese momento y muestra la solución.
 6. **Resultado:** suma de los 3 tiempos de cada jugador, en centésimas, con el desglose por puzzle.
 
 ## Controles
@@ -46,7 +46,7 @@ La lista vive en `index.html` (constante `PAISES`).
 
 ## Práctica
 
-El botón "Práctica · puzzle de ejemplo" abre el nonograma 5×5 de la clase (filas 1, 1, 3, 4, 4 · columnas 2-1, 2, 3, 3, 2), sin límite ni rival, para explicar las reglas antes del duelo.
+El botón "Práctica · puzzle de ejemplo" abre el nonograma 5×5 de la clase (filas 1, 1, 3, 4, 4 · columnas 2-1, 2, 3, 3, 2), sin rival, para explicar las reglas antes del duelo.
 
 ## Archivos
 
