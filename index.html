@@ -91,25 +91,25 @@
 
   .center{ display:flex; flex-direction:column; align-items:center; gap:14px; min-width:0; }
   .boardwrap{ position:relative; }
-  .board{ display:grid; background:#fff; border:4px solid var(--navy); border-radius:12px; box-shadow:0 10px 0 var(--navy2), 0 24px 60px rgba(30,27,75,0.15); padding:6px; user-select:none; touch-action:none; transition:filter .3s; }
-  .board.veiled .cclue, .board.veiled .rclue{ filter:blur(9px); }
+  .board{ display:grid; background:#fff; border:4px solid #000; padding:0; user-select:none; touch-action:none; transition:filter .3s; box-shadow:0 12px 32px rgba(0,0,0,0.18); font-family:Arial, Helvetica, sans-serif; }
+  .board.veiled .cclue, .board.veiled .rclue{ filter:blur(10px); }
   .board.veiled .cell{ pointer-events:none; }
   .veil{ position:absolute; inset:0; display:flex; align-items:center; justify-content:center; text-align:center; pointer-events:none; }
   .veil span{ background:var(--navy); color:#fff; font-weight:800; padding:12px 20px; border-radius:16px; box-shadow:0 6px 0 var(--navy2); font-size:16px; max-width:80%; }
-  .corner{ border-right:3px solid var(--navy); border-bottom:3px solid var(--navy); }
-  .cclue{ display:flex; flex-direction:column; justify-content:flex-end; align-items:center; padding:6px 0 4px; font-family:'Baloo 2'; font-weight:800; font-size:calc(var(--cell) * 0.42); line-height:1.05; color:var(--navy); border-bottom:3px solid var(--navy); border-right:1px solid #d9d4e6; }
-  .rclue{ display:flex; justify-content:flex-end; align-items:center; gap:calc(var(--cell) * 0.2); padding:0 10px 0 8px; font-family:'Baloo 2'; font-weight:800; font-size:calc(var(--cell) * 0.42); line-height:1; color:var(--navy); border-right:3px solid var(--navy); border-bottom:1px solid #d9d4e6; }
-  .cclue.ok, .rclue.ok{ color:#b3aec9; }
-  .cclue.ok span, .rclue.ok span{ text-decoration:line-through; text-decoration-thickness:2px; }
-  .cclue.thick, .cell.thickR{ border-right:3px solid var(--navy) !important; }
-  .rclue.thick, .cell.thickB{ border-bottom:3px solid var(--navy) !important; }
-  .cell{ width:var(--cell); height:var(--cell); border-right:1px solid #d9d4e6; border-bottom:1px solid #d9d4e6; background:#fff; display:flex; align-items:center; justify-content:center; cursor:pointer; position:relative; }
-  .cell:hover{ background:#f1eef8; }
-  .cell.fill{ background:var(--navy); animation:pop .28s ease; }
-  .cell.fill.p0{ background:var(--p0); } .cell.fill.p1{ background:var(--p1); }
-  .cell.x::after{ content:'✕'; color:#b8b3c9; font-weight:800; font-size:calc(var(--cell) * 0.5); line-height:1; }
-  .cell.sol{ background:var(--green2) !important; animation:pop .28s ease; }
-  .board.done .cell.fill{ background:var(--green2); }
+  .corner{ border-right:4px solid #000; border-bottom:4px solid #000; }
+  .cclue{ display:flex; flex-direction:column; justify-content:flex-end; align-items:center; padding:calc(var(--cell) * 0.12) 0 calc(var(--cell) * 0.06); font-weight:900; font-size:calc(var(--cell) * 0.6); line-height:1.05; color:#000; border-bottom:4px solid #000; border-right:2px solid #000; }
+  .rclue{ display:flex; justify-content:flex-end; align-items:center; gap:calc(var(--cell) * 0.32); padding:0 calc(var(--cell) * 0.22) 0 calc(var(--cell) * 0.18); font-weight:900; font-size:calc(var(--cell) * 0.6); line-height:1; color:#000; border-right:4px solid #000; border-bottom:2px solid #000; }
+  .cclue.ok, .rclue.ok{ color:#9a9a9a; }
+  .cclue.ok span, .rclue.ok span{ text-decoration:line-through; text-decoration-thickness:3px; }
+  .cclue.thick, .cell.thickR{ border-right:4px solid #000 !important; }
+  .rclue.thick, .cell.thickB{ border-bottom:4px solid #000 !important; }
+  .cell{ width:var(--cell); height:var(--cell); border-right:2px solid #000; border-bottom:2px solid #000; background:#fff; display:flex; align-items:center; justify-content:center; cursor:pointer; position:relative; }
+  .cell.lastC, .cclue.lastC{ border-right:0 !important; }
+  .cell.lastR, .rclue.lastR{ border-bottom:0 !important; }
+  .cell:hover{ background:#e9e9e9; }
+  .cell.fill{ background:#000; animation:pop .22s ease; }
+  .cell.x::after{ content:'✕'; color:#8a8a8a; font-weight:900; font-size:calc(var(--cell) * 0.55); line-height:1; }
+  .cell.sol{ background:#000 !important; animation:pop .22s ease; }
   .controls{ display:flex; gap:10px; flex-wrap:wrap; justify-content:center; }
   .result{ background:#fff; border-radius:24px; padding:20px 30px; border:4px solid var(--green); box-shadow:0 8px 0 var(--green2); display:flex; flex-direction:column; align-items:center; gap:8px; animation:popA .5s ease both; text-align:center; }
   .result.bad{ border-color:var(--red); box-shadow:0 8px 0 var(--red2); }
@@ -156,7 +156,7 @@
     <div style="text-align:center; max-width:760px;">
       <div class="eyebrow">Nonograma</div>
       <h1><span style="color:var(--p0);" id="hName0">Noruega</span> vs <span style="color:var(--p1);" id="hName1">Inglaterra</span></h1>
-      <p class="lead">Cada jugador resuelve 3 nonogramas por turnos. Los números indican cuántas casillas seguidas van pintadas en cada fila y columna. Gana quien sume menos tiempo, medido al milisegundo.</p>
+      <p class="lead">Cada jugador resuelve 3 nonogramas por turnos. Los números indican cuántas casillas seguidas van pintadas en cada fila y columna. Gana quien sume menos tiempo, medido en centésimas de segundo.</p>
     </div>
     <div class="two">
       <label class="pcard p0"><span>Jugador 1</span><input id="name0" value="Noruega" placeholder="Nombre"></label>
@@ -168,7 +168,7 @@
       <div class="row"><span class="lbl">Tamaño · Puzzle 3</span><div class="seg" data-round="2"><button data-n="5" class="on">5×5</button><button data-n="6">6×6</button><button data-n="7">7×7</button><button data-n="8">8×8</button><button data-n="10">10×10</button></div></div>
       <div class="row"><span class="lbl">Límite por puzzle (segundos)</span><div style="display:flex; align-items:center; gap:10px;"><input class="num" id="limit" type="number" min="0" step="10" value="300"><span class="hint">0 = sin límite. Si se agota, cuenta el límite completo.</span></div></div>
       <div class="row"><span class="lbl">Tachar filas y columnas completas</span><div class="seg" id="hintsSeg"><button data-v="1" class="on">Sí</button><button data-v="0">No</button></div></div>
-      <p class="hint">Los puzzles se generan al azar con solución única. Ambos jugadores reciben puzzles distintos pero del mismo tamaño en cada ronda. Los turnos se alternan: puzzle 1 de cada jugador, luego el 2 y luego el 3.</p>
+      <p class="hint">Los puzzles se generan al azar con solución única. Ambos jugadores reciben puzzles distintos pero del mismo tamaño en cada ronda. Cada jugador resuelve sus 3 puzzles seguidos: primero el jugador 1 y después el jugador 2. Ninguna fila ni columna viene completa.</p>
     </div>
     <div class="btns">
       <button class="pill big green" id="startBtn">¡A jugar!</button>
@@ -283,6 +283,7 @@ function generatePuzzle(n, rnd = Math.random, tries = 300){
     const filled = grid.flat().reduce((a, b) => a + b, 0);
     if (filled < n * n * 0.4 || filled > n * n * 0.78) continue;
     const { rows, cols } = cluesOf(grid);
+    if (rows.some((c) => c[0] === n) || cols.some((c) => c[0] === n)) continue; // sin filas ni columnas completas
     last = { grid, rows, cols, n, unique: false };
     if (solveCount(rows, cols, 2) === 1){ last.unique = true; return last; }
   }
@@ -292,7 +293,7 @@ function boardSolved(cells, rows, cols){ // cells: matriz de 'fill' | 'x' | ''
   const g = cells.map((row) => row.map((v) => (v === 'fill' ? 1 : 0)));
   return g.every((row, r) => sameClue(runsOf(row), rows[r])) && transpose(g).every((col, c) => sameClue(runsOf(col), cols[c]));
 }
-function fmt(ms){ ms = Math.max(0, Math.round(ms)); const m = Math.floor(ms / 60000), s = Math.floor((ms % 60000) / 1000), x = ms % 1000; return `${m}:${String(s).padStart(2, '0')}.${String(x).padStart(3, '0')}`; }
+function fmt(ms){ ms = Math.max(0, Math.round(ms)); const m = Math.floor(ms / 60000), s = Math.floor((ms % 60000) / 1000), c = Math.floor((ms % 1000) / 10); return `${m}:${String(s).padStart(2, '0')}.${String(c).padStart(2, '0')}`; }
 // Puzzle de ejemplo (imagen de la clase): filas 1,1,3,4,4 · columnas 2-1,2,3,3,2
 const EJEMPLO = [[1,0,0,0,0],[1,0,0,0,0],[0,0,1,1,1],[0,1,1,1,1],[1,1,1,1,0]];
 
@@ -361,7 +362,7 @@ function startDuel(){
   $('startBtn').textContent = 'Generando puzzles…'; $('startBtn').disabled = true;
   setTimeout(() => {
     S.puzzles = [S.sizes.map((n) => generatePuzzle(n)), S.sizes.map((n) => generatePuzzle(n))];
-    S.turns = []; for (let r = 0; r < 3; r++){ S.turns.push({ p: 0, r }); S.turns.push({ p: 1, r }); }
+    S.turns = []; for (let p = 0; p < 2; p++) for (let r = 0; r < 3; r++) S.turns.push({ p, r });
     S.times = [[null, null, null], [null, null, null]];
     $('startBtn').textContent = '¡A jugar!'; $('startBtn').disabled = false;
     beginTurn(0);
@@ -381,7 +382,7 @@ function beginTurn(i){
   const pz = puzzle(); S.cells = Array.from({ length: pz.n }, () => new Array(pz.n).fill(''));
   buildBoard(pz); $('result').hidden = true; snd('start');
   show('play'); paint();
-  if (!S.practice && i > 0){ const name = S.names[cur().p] || `Jugador ${cur().p + 1}`; setTimeout(() => flash(`¡Turno de ${name}!`, COLORS[cur().p].main), 250); }
+  if (!S.practice && i > 0 && S.turns[i - 1].p !== cur().p){ const name = S.names[cur().p] || `Jugador ${cur().p + 1}`; setTimeout(() => flash(`¡Turno de ${name}!`, COLORS[cur().p].main), 250); }
 }
 function startClock(){ // cuenta regresiva 3-2-1 y arranca el cronómetro
   if (S.sub !== 'ready' && S.sub !== 'paused') return;
@@ -430,15 +431,15 @@ function exitToSetup(){ clearInterval(S.cd); clearInterval(S.tick); cancelAnimat
 function buildBoard(pz){
   const n = pz.n, board = $('board');
   const avail = Math.min(window.innerWidth * (window.innerWidth > 900 ? 0.5 : 0.9), window.innerHeight * 0.62);
-  const cell = Math.max(26, Math.min(64, Math.floor(avail / (n + 2.2))));
+  const cell = Math.max(28, Math.min(78, Math.floor(avail / (n + 2.4))));
   board.style.setProperty('--cell', cell + 'px');
   board.style.gridTemplateColumns = `auto repeat(${n}, ${cell}px)`; board.style.gridTemplateRows = `auto repeat(${n}, ${cell}px)`;
   const frag = document.createDocumentFragment();
   const corner = document.createElement('div'); corner.className = 'corner'; frag.appendChild(corner);
-  for (let c = 0; c < n; c++){ const d = document.createElement('div'); d.className = 'cclue' + (((c + 1) % 5 === 0 && c + 1 < n) ? ' thick' : ''); d.dataset.c = c; d.innerHTML = pz.cols[c].map((v) => `<span>${v}</span>`).join(''); frag.appendChild(d); }
+  for (let c = 0; c < n; c++){ const d = document.createElement('div'); d.className = 'cclue' + (((c + 1) % 5 === 0 && c + 1 < n) ? ' thick' : '') + (c === n - 1 ? ' lastC' : ''); d.dataset.c = c; d.innerHTML = pz.cols[c].map((v) => `<span>${v}</span>`).join(''); frag.appendChild(d); }
   for (let r = 0; r < n; r++){
-    const d = document.createElement('div'); d.className = 'rclue' + (((r + 1) % 5 === 0 && r + 1 < n) ? ' thick' : ''); d.dataset.r = r; d.innerHTML = pz.rows[r].map((v) => `<span>${v}</span>`).join(''); frag.appendChild(d);
-    for (let c = 0; c < n; c++){ const el = document.createElement('div'); el.className = 'cell' + (((c + 1) % 5 === 0 && c + 1 < n) ? ' thickR' : '') + (((r + 1) % 5 === 0 && r + 1 < n) ? ' thickB' : ''); el.dataset.r = r; el.dataset.c = c; frag.appendChild(el); }
+    const d = document.createElement('div'); d.className = 'rclue' + (((r + 1) % 5 === 0 && r + 1 < n) ? ' thick' : '') + (r === n - 1 ? ' lastR' : ''); d.dataset.r = r; d.innerHTML = pz.rows[r].map((v) => `<span>${v}</span>`).join(''); frag.appendChild(d);
+    for (let c = 0; c < n; c++){ const el = document.createElement('div'); el.className = 'cell' + (((c + 1) % 5 === 0 && c + 1 < n) ? ' thickR' : '') + (((r + 1) % 5 === 0 && r + 1 < n) ? ' thickB' : '') + (c === n - 1 ? ' lastC' : '') + (r === n - 1 ? ' lastR' : ''); el.dataset.r = r; el.dataset.c = c; frag.appendChild(el); }
   }
   board.innerHTML = ''; board.appendChild(frag); board.classList.remove('done'); updateHints();
 }
@@ -446,8 +447,8 @@ function setCell(r, c, v){
   if (S.cells[r][c] === v) return;
   S.cells[r][c] = v;
   const el = $('board').querySelector(`.cell[data-r="${r}"][data-c="${c}"]`);
-  el.className = el.className.replace(/\b(fill|x|p0|p1)\b/g, '').trim();
-  if (v === 'fill'){ el.classList.add('fill', 'p' + cur().p); el.style.animation = 'none'; void el.offsetWidth; el.style.animation = ''; }
+  el.className = el.className.replace(/\b(fill|x|sol)\b/g, '').trim();
+  if (v === 'fill'){ el.classList.add('fill'); el.style.animation = 'none'; void el.offsetWidth; el.style.animation = ''; }
   else if (v === 'x') el.classList.add('x');
   snd(v === 'fill' ? 'fill' : v === 'x' ? 'x' : 'erase');
 }
@@ -458,7 +459,7 @@ function updateHints(){
 }
 function afterChange(){ updateHints(); if (boardSolved(S.cells, puzzle().rows, puzzle().cols)) finishPuzzle(true); }
 function clearBoard(){ if (S.sub !== 'running') return; S.cells.forEach((row, r) => row.forEach((_, c) => setCell(r, c, ''))); updateHints(); }
-function revealSolution(){ const pz = puzzle(); const cells = [...document.querySelectorAll('#board .cell')]; cells.forEach((el) => { const r = +el.dataset.r, c = +el.dataset.c; setTimeout(() => { el.classList.remove('fill', 'x', 'p0', 'p1'); if (pz.grid[r][c]) el.classList.add('sol'); }, (r + c) * 45); }); }
+function revealSolution(){ const pz = puzzle(); const cells = [...document.querySelectorAll('#board .cell')]; cells.forEach((el) => { const r = +el.dataset.r, c = +el.dataset.c; setTimeout(() => { el.classList.remove('fill', 'x'); if (pz.grid[r][c]) el.classList.add('sol'); }, (r + c) * 45); }); }
 
 const board = $('board');
 board.addEventListener('contextmenu', (e) => e.preventDefault());
